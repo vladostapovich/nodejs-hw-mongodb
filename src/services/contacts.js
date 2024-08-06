@@ -14,3 +14,32 @@ export const getContactByID = async (contactId) => {
   const contact = await ContactCollection.findById(contactId);
   return contact;
 };
+
+export const createContacts = async (payload) => {
+  const contact = await ContactCollection.create(payload);
+  return contact;
+};
+export const updateContact = async (contactId, payload, options = {}) => {
+  const opaResult = await ContactCollection.findByIdAndUpdate(
+    { _id: contactId },
+    payload,
+    {
+      new: true,
+      includeResultMetadata: true,
+      ...options,
+    },
+  );
+  if (!opaResult || !opaResult.value) return null;
+
+  return {
+    contact: opaResult.value,
+    isNew: Boolean(opaResult?.lastErrorObject?.upserted),
+  };
+};
+
+export const deleteContact = async (contactId) => {
+  const contact = await ContactCollection.findByIdAndDelete({
+    _id: contactId,
+  });
+  return contact;
+};
