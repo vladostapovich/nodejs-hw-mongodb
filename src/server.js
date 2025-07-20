@@ -1,16 +1,21 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
-import contactsRouter from '../src/routers/contacts.js';
-import { env } from './utils/env.js';
-import { notFoundHandler } from './middleware/notFoundHadler.js';
-import { errorHandler } from './middleware/errorHadler.js';
+import dotenv from 'dotenv';
+import contactsRouter from './routers/contacts.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
-const PORT = Number(env('PORT'));
+dotenv.config();
+
+const PORT = Number(process.env.PORT) || 3000;
+
 export const setupServer = () => {
   const app = express();
+
   app.use(express.json());
   app.use(cors());
+
   app.use(
     pino({
       transport: {
@@ -18,8 +23,11 @@ export const setupServer = () => {
       },
     }),
   );
-  app.use(contactsRouter);
-  app.use('*', notFoundHandler);
+
+  app.use('/contacts', contactsRouter);
+
+  app.use(notFoundHandler);
+
   app.use(errorHandler);
 
   app.listen(PORT, () => {
