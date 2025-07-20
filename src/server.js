@@ -8,7 +8,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
 
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) > 0 ? Number(process.env.PORT) : 3000;
 
 export const setupServer = () => {
   const app = express();
