@@ -1,29 +1,29 @@
-const parseType = (type) => {
-  const isString = typeof type === 'string';
-  if (!isString) return;
-
-  const isType = (type) => ['work', 'home', 'personal'].includes(type);
-  if (isType(type)) return type;
+const ParseContactType = (contactType) => {
+  const isString = typeof contactType === 'string';
+  if (!isString) return undefined;
+  const isContactType = (contactType) =>
+    ['work', 'home', 'personal'].includes(contactType);
+  if (isContactType(contactType)) return contactType;
 };
-
-const parseIsFavourite = (isFavourite) => {
-  const isString = typeof isFavourite === 'string';
-  if (!isString) return;
-
-  if (isFavourite.toLowerCase() === 'true') return true;
-  if (isFavourite.toLowerCase() === 'false') return false;
-
-  return;
+const ParseIsFavourite = (isFavourite) => {
+  if (typeof isFavourite === 'boolean') {
+    return isFavourite;
+  }
+  if (typeof isFavourite === 'string') {
+    // Перетворюємо рядок 'true' або 'false' на відповідне булеве значення
+    return isFavourite.toLowerCase() === 'true';
+  }
+  // Повертаємо undefined, якщо значення не підходить
+  return undefined;
 };
 
 export const parseFilterParams = (query) => {
-  const { isFavourite, type } = query;
+  const { contactType, isFavourite } = query;
 
-  const parsedType = parseType(type);
-  const parsedIsFavourite = parseIsFavourite(isFavourite);
-
+  const parsedContactType = ParseContactType(contactType);
+  const parsedIsFavourite = ParseIsFavourite(isFavourite);
   return {
-    type: parsedType,
+    contactType: parsedContactType,
     isFavourite: parsedIsFavourite,
   };
 };

@@ -1,5 +1,5 @@
-import { ContactCollection } from '../db/models/contact.js';
 import { SORT_ORDER } from '../contacts/index.js';
+import { ContactCollection } from '../db/models/contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export const getAllContacts = async ({
@@ -12,39 +12,34 @@ export const getAllContacts = async ({
   try {
     const limit = perPage;
     const skip = (page - 1) * perPage;
-    const contactQuery = ContactCollection.find();
-    if (filter.type) {
-      contactQuery.where('contactType').equals(filter.type);
+    const contactsQuery = ContactCollection.find();
+    if (filter.contactType) {
+      contactsQuery.where('contactType').equals(filter.contactType);
     }
     if (filter.isFavourite !== undefined) {
-      contactQuery.where('isFavourite').equals(filter.isFavourite);
+      contactsQuery.where('isFavourite').equals(filter.isFavourite);
     }
 
     const [contactsCount, contacts] = await Promise.all([
-      ContactCollection.find().merge(contactQuery).countDocuments(),
-      contactQuery
+      ContactCollection.find().merge(contactsQuery).countDocuments(),
+      contactsQuery
         .skip(skip)
         .limit(limit)
         .sort({ [sortBy]: sortOrder })
         .exec(),
     ]);
-
     const paginationData = calculatePaginationData(
       contactsCount,
       perPage,
       page,
     );
-
-    return {
-      date: contacts,
-      ...paginationData,
-    };
+    console.log('Contacts:', contacts);
+    return { data: contacts, ...paginationData };
   } catch (error) {
     console.error('Error fetching contacts:', error);
     throw error;
   }
 };
-
 export const getContactByID = async (contactId) => {
   const contact = await ContactCollection.findOne({ _id: contactId });
   return contact;
@@ -55,7 +50,7 @@ export const createContacts = async (payload) => {
   return contact;
 };
 export const updateContact = async (contactId, payload, options = {}) => {
-  const opaResult = await ContactCollection.findByIdAndUpdate(
+  const opaResult = await ContactCollection.findOneAndUpdate(
     { _id: contactId },
     payload,
     {
@@ -73,7 +68,7 @@ export const updateContact = async (contactId, payload, options = {}) => {
 };
 
 export const deleteContact = async (contactId) => {
-  const contact = await ContactCollection.findByIdAndDelete({
+  const contact = await ContactCollection.findOneAndDelete({
     _id: contactId,
   });
   return contact;

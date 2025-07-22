@@ -14,7 +14,6 @@ export const getContactsController = async (req, res, next) => {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query);
   const filter = parseFilterParams(req.query);
-
   const contacts = await getAllContacts({
     page,
     perPage,
@@ -28,7 +27,6 @@ export const getContactsController = async (req, res, next) => {
     data: contacts,
   });
 };
-
 // eslint-disable-next-line no-unused-vars
 export const getContactByIDController = async (req, res, next) => {
   const { contactId } = req.params;
