@@ -4,7 +4,7 @@ const parseNumber = (number, defaultValue) => {
 
   const parsedNumber = parseInt(number);
 
-  if (Number.isNaN(parsedNumber)) {
+  if (Number.isNaN(parsedNumber || parseNumber <= 0)) {
     return defaultValue;
   }
   return parseNumber;

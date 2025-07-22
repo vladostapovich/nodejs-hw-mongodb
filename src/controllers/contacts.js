@@ -9,28 +9,24 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
-
+// eslint-disable-next-line no-unused-vars
 export const getContactsController = async (req, res, next) => {
-  try {
-    const { page, perPage } = parsePaginationParams(req.query);
-    const { sortBy, sortOrder } = parseSortParams(req.query);
-    const filter = parseFilterParams(req.query);
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query);
+  const filter = parseFilterParams(req.query);
 
-    const contacts = await getAllContacts({
-      page,
-      perPage,
-      sortBy,
-      sortOrder,
-      filter,
-    });
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully found contacts!',
-      data: contacts,
-    });
-  } catch (error) {
-    next(error);
-  }
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    filter,
+  });
+  res.json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: contacts,
+  });
 };
 
 // eslint-disable-next-line no-unused-vars
