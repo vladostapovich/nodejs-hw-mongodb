@@ -54,8 +54,8 @@ export const createContacts = async (payload) => {
 export const updateContact = async (
   contactId,
   payload,
-  options = {},
   userId,
+  options = {},
 ) => {
   const opaResult = await ContactCollection.findOneAndUpdate(
     { _id: contactId, userId },
@@ -73,7 +73,6 @@ export const updateContact = async (
     isNew: Boolean(opaResult?.lastErrorObject?.upserted),
   };
 };
-
 export const deleteContact = async (contactId, userId) => {
   const contact = await ContactCollection.findOneAndDelete({
     _id: contactId,

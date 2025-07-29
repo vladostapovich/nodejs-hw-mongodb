@@ -52,7 +52,6 @@ const createSession = () => {
   };
 };
 export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
-  console.log('Проверка сессии:', { sessionId, refreshToken });
   const session = await SessionsCollection.findOne({
     _id: sessionId,
     refreshToken,
