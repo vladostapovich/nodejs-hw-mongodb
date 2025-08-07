@@ -9,6 +9,9 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 // eslint-disable-next-line no-unused-vars
 export const getContactsController = async (req, res, next) => {
@@ -50,6 +53,16 @@ export const getContactByIDController = async (req, res, next) => {
 export const createContactController = async (req, res) => {
   const userId = req.user._id;
   const payload = { ...req.body, userId };
+  const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+    payload.photo = photoUrl;
+  }
   const contact = await createContacts(payload, userId);
   res.status(201).json({
     status: 201,
@@ -61,7 +74,22 @@ export const createContactController = async (req, res) => {
 export const patchContactController = async (req, res, next) => {
   const userId = req.user._id;
   const { contactId } = req.params;
-  const result = await updateContact(contactId, req.body, userId);
+  const photo = req.file;
+  let photoUrl;
+
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+  const result = await updateContact(contactId, userId, {
+    ...req.body,
+    photo: photoUrl,
+  });
+  console.log(result);
+
   if (!result) {
     next(createHttpError(404, 'Contacts not found'));
     return;
@@ -69,7 +97,7 @@ export const patchContactController = async (req, res, next) => {
   res.json({
     status: 200,
     message: 'Successfully patched a contact!',
-    data: result.contact,
+    data: result,
   });
 };
 export const deleteContactController = async (req, res, next) => {

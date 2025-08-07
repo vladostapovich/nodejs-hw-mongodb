@@ -1,4 +1,4 @@
-import { SORT_ORDER } from '../contacts/index.js';
+import { SORT_ORDER } from '../constants/index.js';
 import { ContactCollection } from '../db/models/contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
@@ -13,17 +13,16 @@ export const getAllContacts = async ({
   try {
     const limit = perPage;
     const skip = (page - 1) * perPage;
-    const contactsQuery = ContactCollection.find();
+    const contactsQuery = ContactCollection.find(userId);
     if (filter.contactType) {
       contactsQuery.where('contactType').equals(filter.contactType);
     }
     if (filter.isFavourite !== undefined) {
       contactsQuery.where('isFavourite').equals(filter.isFavourite);
     }
-    contactsQuery.where('userId').equals(userId);
 
     const [contactsCount, contacts] = await Promise.all([
-      ContactCollection.find().merge(contactsQuery).countDocuments(),
+      ContactCollection.find(userId).merge(contactsQuery).countDocuments(),
       contactsQuery
         .skip(skip)
         .limit(limit)
@@ -51,28 +50,18 @@ export const createContacts = async (payload) => {
   const contact = await ContactCollection.create(payload);
   return contact;
 };
-export const updateContact = async (
-  contactId,
-  payload,
-  userId,
-  options = {},
-) => {
+export const updateContact = async (contactId, userId, payload) => {
   const opaResult = await ContactCollection.findOneAndUpdate(
     { _id: contactId, userId },
     payload,
     {
       new: true,
-      includeResultMetadata: true,
-      ...options,
     },
   );
-  if (!opaResult || !opaResult.value) return null;
 
-  return {
-    contact: opaResult.value,
-    isNew: Boolean(opaResult?.lastErrorObject?.upserted),
-  };
+  return opaResult;
 };
+
 export const deleteContact = async (contactId, userId) => {
   const contact = await ContactCollection.findOneAndDelete({
     _id: contactId,
