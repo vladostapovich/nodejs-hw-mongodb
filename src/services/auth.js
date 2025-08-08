@@ -1,6 +1,7 @@
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+
 import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/userShcema.js';
 import bcrypt from 'bcrypt';
@@ -12,10 +13,9 @@ import {
   TEMPLATES_DIR,
 } from '../contacts/index.js';
 import { sendEmail } from '../utils/sendMail.js';
-import { getEnvVar } from '../utils/getEnvVar.js';
 import { SMTP } from '../contacts/index.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 import jwt from 'jsonwebtoken';
-
 export const registerUser = async (payload) => {
   const user = await UsersCollection.findOne({ email: payload.email });
   if (user) throw createHttpError(409, 'Email in use');
@@ -60,6 +60,7 @@ const createSession = () => {
   };
 };
 export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
+  console.log('Проверка сессии:', { sessionId, refreshToken });
   const session = await SessionsCollection.findOne({
     _id: sessionId,
     refreshToken,
@@ -88,7 +89,7 @@ export const requestResetToken = async (email) => {
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
-  const resetToken = jwt.sing(
+  const resetToken = jwt.sign(
     {
       sub: user._id,
       email,
@@ -98,10 +99,12 @@ export const requestResetToken = async (email) => {
       expiresIn: '5m',
     },
   );
+
   const resetPasswordTemplatePath = path.join(
     TEMPLATES_DIR,
     'reset-password.html',
   );
+
   const templateSource = (
     await fs.readFile(resetPasswordTemplatePath)
   ).toString();
@@ -139,6 +142,7 @@ export const resetPassword = async (payload) => {
     email: entries.email,
     _id: entries.sub,
   });
+
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
