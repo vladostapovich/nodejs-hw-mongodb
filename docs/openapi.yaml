@@ -1,20 +1,62 @@
 openapi: 3.1.0
 info:
+  title: Contacts app
   version: 1.0.0
-  title: <назва вашого додатку>
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: <опис вашого додатку>
+    url: http://www.org/license/LICENSE-2.0.html
+  description: This is a documentation of contacts app
+
 tags:
-  # теги, що ви будете використовувати
+  - name: Contacts
+    description: Operations about contacts.
+  - name: Authentication
+    description: Authentication operations.
+
 servers:
   - url: http://localhost:3000
-  - url: #посилання на задеплоєний сайт
+  - url: https://nodejs-hw-mongodb-kpbl.onrender.com
+
 paths:
-  # тут будуть посилання на ендпоінти
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
+    post:
+      $ref: ../swagger/paths/contacts/post.yaml
+
+  /contacts/{contactId}:
+    get:
+      $ref: ../swagger/paths/contacts/{contactId}/get.yaml
+    delete:
+      $ref: ../swagger/paths/contacts/{contactId}/delete.yaml
+    patch:
+      $ref: ../swagger/paths/contacts/{contactId}/patch.yaml
+
+  /authentication/register:
+    post:
+      $ref: ../swagger/paths/authentication/register.yaml
+
+  /authentication/login:
+    post:
+      $ref: ../swagger/paths/authentication/login.yaml
+
+  /authentication/reset-pwd:
+    post:
+      $ref: ../swagger/paths/authentication/resetpwd.yaml
+
+  /authentication/send-reset-email:
+    post:
+      $ref: ../swagger/paths/authentication/sendresetemail.yaml
+  /authentication/refresh:
+    post:
+      $ref: ../swagger/paths/authentication/refresh.yaml
+  /authentication/logout:
+    post:
+      $ref: ../swagger/paths/authentication/logout.yaml
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT
