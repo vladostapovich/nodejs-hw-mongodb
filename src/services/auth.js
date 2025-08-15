@@ -11,7 +11,7 @@ import {
   ACCESS_TOKEN_EXPIRY,
   REFRESH_TOKEN_EXPIRY,
   TEMPLATES_DIR,
-} from '../constants/index.js';
+} from '../contacts/index.js';
 import { sendEmail } from '../utils/sendMail.js';
 import { SMTP } from '../contacts/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
