@@ -14,7 +14,8 @@ tags:
     description: Authentication operations.
 
 servers:
-  - url: https://nodejs-hw-mongodb-kpbl.onrender.com
+  - url: http://127.0.0.1:8080
+  - url: https://hw7-swagger-m6ou.onrender.com
 
 paths:
   /contacts:
