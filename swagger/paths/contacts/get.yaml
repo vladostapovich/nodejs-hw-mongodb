@@ -31,19 +31,6 @@ parameters:
       enum: ['asc', 'desc']
       example: 'asc'
     description: "Order to sort the results. Can be 'asc' or 'desc'."
-  # - in: query
-  #   name: userId
-  #   schema:
-  #     type: string
-  #     format: objectid
-  #     example: 60c72b2f9b1e4f45a1d09b4f
-  #   description: 'Filter contacts by user ID'
-  # - in: query
-  #   name: filter
-  #   schema:
-  #     type: object
-  #     additionalProperties: true
-  #   description: 'Additional filter criteria for querying contacts. This field can be used to specify other filters, e.g., isFavourite.'
 responses:
   '200':
     description: Successfully retrieved contacts
